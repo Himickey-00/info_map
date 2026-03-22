@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfoMap - システムアーキテクチャ（編集可能）</title>
+    <style>
+        :root {
+            --bg-primary: #0d0d12;
+            --bg-secondary: #16161f;
+            --bg-tertiary: #1e1e2a;
+            --border-primary: #2a2a3a;
+            --border-accent: #4a4a6a;
+            --text-primary: #e8e8ef;
+            --text-secondary: #8888a0;
+            --text-tertiary: #5a5a70;
+            --accent-green: #2ecc71;
+            --accent-blue: #3498db;
+            --accent-purple: #9b59b6;
+            --accent-orange: #e67e22;
+            --accent-cyan: #1abc9c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Noto Sans JP', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 40px;
+        }
+
+        .edit-hint {
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            margin-bottom: 30px;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .diagram {
+            padding: 30px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-primary);
+        }
+
+        /* 外部データ */
+        .ext-data {
+            border: 2px dashed var(--border-accent);
+            border-radius: 12px;
+            padding: 16px 24px;
+            max-width: 400px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .ext-data-title {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .ext-data-inner {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .ext-chip {
+            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent-cyan);
+            cursor: text;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .ext-chip:hover {
+            background: rgba(26, 188, 156, 0.1);
+        }
+
+        .ext-chip:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-cyan);
+        }
+
+        /* 矢印ゾーン */
+        .arrows-zone {
+            height: 50px;
+            position: relative;
+            width: 100%;
+        }
+
+        .arrows-zone svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* 3層レイアウト */
+        .layers {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* 各レイヤーボックス */
+        .layer-box {
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            border: 1px solid var(--border-primary);
+            transition: all 0.2s;
+        }
+
+        .layer-box:hover {
+            border-color: var(--border-accent);
+        }
+
+        .layer-box.frontend { border-top: 3px solid var(--accent-green); }
+        .layer-box.api { border-top: 3px solid var(--accent-blue); }
+        .layer-box.backend { border-top: 3px solid var(--accent-purple); }
+
+        .layer-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: text;
+        }
+
+        .frontend .layer-title { color: var(--accent-green); background: rgba(46, 204, 113, 0.1); }
+        .api .layer-title { color: var(--accent-blue); background: rgba(52, 152, 219, 0.1); }
+        .backend .layer-title { color: var(--accent-purple); background: rgba(155, 89, 182, 0.1); }
+
+        .layer-title:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px currentColor;
+        }
+
+        /* ノード */
+        .node {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            text-align: center;
+            cursor: text;
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+
+        .node:hover {
+            border-color: var(--border-accent);
+            background: var(--bg-tertiary);
+        }
+
+        .node:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-blue);
+            border-color: transparent;
+        }
+
+        .node.sm {
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            color: var(--text-secondary);
+        }
+
+        /* 技術スタック表示 */
+        .tech-stack {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-align: center;
+            margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-primary);
+            cursor: text;
+        }
+
+        .tech-stack:focus {
+            outline: none;
+            color: var(--text-secondary);
+        }
+
+        /* 矢印コンテナ */
+        .between-arrows {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            align-self: center;
+            padding: 0 8px;
+        }
+
+        .arr-label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            cursor: text;
+            text-align: center;
+        }
+
+        .arr-label:focus {
+            outline: none;
+            color: var(--text-secondary);
+        }
+
+        .horiz-arr {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .horiz-line {
+            height: 2px;
+            width: 40px;
+            background: var(--border-accent);
+        }
+
+        .horiz-line.dashed {
+            background: repeating-linear-gradient(
+                90deg,
+                var(--border-accent) 0px,
+                var(--border-accent) 6px,
+                transparent 6px,
+                transparent 10px
+            );
+        }
+
+        .horiz-head-l {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-right: 7px solid var(--border-accent);
+        }
+
+        .horiz-head-r {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 7px solid var(--border-accent);
+        }
+
+        /* モデル内部レイアウト */
+        .model-inner {
+            display: flex;
+            gap: 16px;
+        }
+
+        .model-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .model-col-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            text-align: center;
+            cursor: text;
+            padding: 4px 10px;
+            background: rgba(230, 126, 34, 0.1);
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .model-col-title:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-orange);
+        }
+
+        /* 縦矢印 */
+        .arr-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .arr-line {
+            width: 2px;
+            height: 8px;
+            background: var(--border-accent);
+        }
+
+        .arr-head {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid var(--border-accent);
+        }
+
+        /* データフローセクション */
+        .data-flow {
+            margin-top: 30px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .flow-title {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-align: center;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .flow-item {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: text;
+        }
+
+        .flow-item:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-blue);
+        }
+
+        .flow-item.user {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+        }
+
+        .flow-item.frontend {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .flow-item.api {
+            background: rgba(52, 152, 219, 0.15);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .flow-item.backend {
+            background: rgba(155, 89, 182, 0.15);
+            border: 1px solid var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .flow-item.db {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .flow-arrow {
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>InfoMap システムアーキテクチャ</h1>
+        <p class="subtitle">ニュース情報空間可視化システム</p>
+        <div class="edit-hint">クリックして編集可能</div>
+
+        <div class="diagram">
+            <!-- 外部データ -->
+            <div class="ext-data">
+                <div class="ext-data-title" contenteditable="true" spellcheck="false">外部データ</div>
+                <div class="ext-data-inner">
+                    <div class="ext-chip" contenteditable="true" spellcheck="false">ニュース記事</div>
+                    <div class="ext-chip" contenteditable="true" spellcheck="false">ナレッジグラフ</div>
+                </div>
+            </div>
+
+            <!-- 上部矢印ゾーン -->
+            <div class="arrows-zone">
+                <svg id="top-arrows"></svg>
+            </div>
+
+            <!-- 3層 -->
+            <div class="layers" id="layers-row">
+
+                <!-- 層③ ブラウザ拡張 -->
+                <div class="layer-box frontend" style="width: 180px;" id="box-ext">
+                    <div class="layer-title" contenteditable="true" spellcheck="false">ブラウザ拡張</div>
+                    <div class="node" contenteditable="true" spellcheck="false">情報空間マップ</div>
+                    <div class="node" contenteditable="true" spellcheck="false">多様性スコア</div>
+                    <div class="node" contenteditable="true" spellcheck="false">推薦記事</div>
+                    <div class="tech-stack" contenteditable="true" spellcheck="false">TypeScript · D3.js · Chrome API</div>
+                </div>
+
+                <!-- 層③↔層② の矢印 -->
+                <div class="between-arrows">
+                    <div>
+                        <div class="arr-label" contenteditable="true" spellcheck="false">表示データ</div>
+                        <div class="horiz-arr">
+                            <div class="horiz-head-l"></div>
+                            <div class="horiz-line"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="horiz-arr">
+                            <div class="horiz-line dashed"></div>
+                            <div class="horiz-head-r"></div>
+                        </div>
+                        <div class="arr-label" contenteditable="true" spellcheck="false">記事URL</div>
+                    </div>
+                </div>
+
+                <!-- 層② APIサーバー -->
+                <div class="layer-box api" style="width: 190px;" id="box-api">
+                    <div class="layer-title" contenteditable="true" spellcheck="false">APIサーバー</div>
+                    <div class="node" contenteditable="true" spellcheck="false">分類API</div>
+                    <div class="node" contenteditable="true" spellcheck="false">推薦API</div>
+                    <div class="node" contenteditable="true" spellcheck="false">スコアAPI</div>
+                    <div class="tech-stack" contenteditable="true" spellcheck="false">FastAPI · Redis</div>
+                </div>
+
+                <!-- 層②↔層① の矢印 -->
+                <div class="between-arrows">
+                    <div>
+                        <div class="arr-label" contenteditable="true" spellcheck="false">推論結果</div>
+                        <div class="horiz-arr">
+                            <div class="horiz-head-l"></div>
+                            <div class="horiz-line"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 層① 分類モデル -->
+                <div class="layer-box backend" id="box-model">
+                    <div class="layer-title" contenteditable="true" spellcheck="false">分類モデル</div>
+                    <div class="model-inner">
+                        <!-- 争点抽出 -->
+                        <div class="model-col">
+                            <div class="model-col-title" contenteditable="true" spellcheck="false">争点抽出</div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">BERT埋め込み</div>
+                            <div class="arr-wrap"><div class="arr-line"></div><div class="arr-head"></div></div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">Parametric UMAP</div>
+                            <div class="arr-wrap"><div class="arr-line"></div><div class="arr-head"></div></div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">HDBSCAN</div>
+                            <div class="arr-wrap"><div class="arr-line"></div><div class="arr-head"></div></div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">KGラベリング</div>
+                        </div>
+                        <!-- 視点抽出 -->
+                        <div class="model-col">
+                            <div class="model-col-title" contenteditable="true" spellcheck="false">視点抽出</div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">対照学習</div>
+                            <div class="arr-wrap"><div class="arr-line"></div><div class="arr-head"></div></div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">視点ベクトル</div>
+                            <div class="arr-wrap"><div class="arr-line"></div><div class="arr-head"></div></div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">クラスタリング</div>
+                            <div class="arr-wrap"><div class="arr-line"></div><div class="arr-head"></div></div>
+                            <div class="node sm" contenteditable="true" spellcheck="false">視点ラベル</div>
+                        </div>
+                    </div>
+                    <div class="tech-stack" contenteditable="true" spellcheck="false">Python · PyTorch · PostgreSQL</div>
+                </div>
+
+            </div>
+
+            <!-- データフロー -->
+            <div class="data-flow">
+                <div class="flow-title">データフロー</div>
+                <div class="flow-diagram">
+                    <div class="flow-item user" contenteditable="true" spellcheck="false">ユーザー</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item frontend" contenteditable="true" spellcheck="false">Chrome拡張</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item api" contenteditable="true" spellcheck="false">API</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item backend" contenteditable="true" spellcheck="false">MLモデル</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item db" contenteditable="true" spellcheck="false">DB</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const svg = document.getElementById('top-arrows');
+            const boxApi = document.getElementById('box-api');
+            const boxModel = document.getElementById('box-model');
+
+            function drawArrows() {
+                svg.innerHTML = '';
+                const svgRect = svg.getBoundingClientRect();
+                const apiRect = boxApi.getBoundingClientRect();
+                const modelRect = boxModel.getBoundingClientRect();
+
+                const defs = `<defs>
+                    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M2 1L8 5L2 9" fill="none" stroke="#4a4a6a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </marker>
+                </defs>`;
+                svg.innerHTML = defs;
+
+                function line(x1, y1, x2, y2, dashed) {
+                    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    l.setAttribute('x1', x1);
+                    l.setAttribute('y1', y1);
+                    l.setAttribute('x2', x2);
+                    l.setAttribute('y2', y2);
+                    l.setAttribute('stroke', '#4a4a6a');
+                    l.setAttribute('stroke-width', '2');
+                    l.setAttribute('marker-end', 'url(#arr2)');
+                    if (dashed) l.setAttribute('stroke-dasharray', '6,4');
+                    svg.appendChild(l);
+                }
+
+                const apiCx = apiRect.left + apiRect.width / 2 - svgRect.left;
+                const modelCx = modelRect.left + modelRect.width / 2 - svgRect.left;
+                const svgH = svgRect.height;
+
+                line(apiCx, 0, apiCx, svgH - 5);
+                line(modelCx, 0, modelCx, svgH - 5, true);
+            }
+
+            drawArrows();
+            window.addEventListener('resize', drawArrows);
+        });
+    </script>
+</body>
+</html>
