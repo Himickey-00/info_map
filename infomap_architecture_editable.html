@@ -3,24 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InfoMap - システムアーキテクチャ（編集可能）</title>
+    <title>InfoMap - システムアーキテクチャ</title>
     <style>
-        :root {
-            --bg-primary: #0d0d12;
-            --bg-secondary: #16161f;
-            --bg-tertiary: #1e1e2a;
-            --border-primary: #2a2a3a;
-            --border-accent: #4a4a6a;
-            --text-primary: #e8e8ef;
-            --text-secondary: #8888a0;
-            --text-tertiary: #5a5a70;
-            --accent-green: #2ecc71;
-            --accent-blue: #3498db;
-            --accent-purple: #9b59b6;
-            --accent-orange: #e67e22;
-            --accent-cyan: #1abc9c;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -29,105 +13,74 @@
 
         body {
             font-family: 'Hiragino Sans', 'Noto Sans JP', -apple-system, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: #fff;
+            color: #222;
             min-height: 100vh;
             padding: 40px 20px;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
         h1 {
             text-align: center;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 600;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 6px;
         }
 
         .subtitle {
             text-align: center;
-            color: var(--text-secondary);
+            color: #666;
             font-size: 0.85rem;
             margin-bottom: 40px;
         }
 
-        .edit-hint {
-            text-align: center;
-            color: var(--text-tertiary);
-            font-size: 0.75rem;
-            margin-bottom: 30px;
-            padding: 8px 16px;
-            background: var(--bg-secondary);
-            border-radius: 20px;
-            display: inline-block;
-            margin-left: 50%;
-            transform: translateX(-50%);
-        }
-
         .diagram {
-            padding: 30px;
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            border: 1px solid var(--border-primary);
+            padding: 24px;
         }
 
         /* 外部データ */
         .ext-data {
-            border: 2px dashed var(--border-accent);
-            border-radius: 12px;
-            padding: 16px 24px;
-            max-width: 400px;
-            margin: 0 auto 20px;
-            background: rgba(255, 255, 255, 0.02);
+            border: 1.5px dashed #999;
+            border-radius: 10px;
+            padding: 12px 20px;
+            max-width: 340px;
+            margin: 0 auto 16px;
         }
 
         .ext-data-title {
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: #666;
             text-align: center;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            margin-bottom: 10px;
         }
 
         .ext-data-inner {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
         }
 
         .ext-chip {
-            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
-            border: 1px solid var(--accent-cyan);
-            border-radius: 8px;
-            padding: 8px 18px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--accent-cyan);
+            border: 1px solid #666;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
             cursor: text;
             text-align: center;
-            transition: all 0.2s;
-        }
-
-        .ext-chip:hover {
-            background: rgba(26, 188, 156, 0.1);
         }
 
         .ext-chip:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--accent-cyan);
+            outline: 2px solid #333;
+            outline-offset: 1px;
         }
 
         /* 矢印ゾーン */
         .arrows-zone {
-            height: 50px;
+            height: 40px;
             position: relative;
             width: 100%;
         }
@@ -144,189 +97,151 @@
         /* 3層レイアウト */
         .layers {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             justify-content: center;
             align-items: flex-start;
         }
 
         /* 各レイヤーボックス */
         .layer-box {
-            background: var(--bg-tertiary);
-            border-radius: 14px;
-            padding: 16px;
+            border: 1.5px solid #333;
+            border-radius: 10px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            position: relative;
-            border: 1px solid var(--border-primary);
-            transition: all 0.2s;
+            gap: 8px;
         }
-
-        .layer-box:hover {
-            border-color: var(--border-accent);
-        }
-
-        .layer-box.frontend { border-top: 3px solid var(--accent-green); }
-        .layer-box.api { border-top: 3px solid var(--accent-blue); }
-        .layer-box.backend { border-top: 3px solid var(--accent-purple); }
 
         .layer-title {
             font-size: 0.8rem;
             font-weight: 600;
             text-align: center;
-            margin-bottom: 6px;
-            padding: 6px 12px;
-            border-radius: 6px;
+            margin-bottom: 4px;
             cursor: text;
         }
 
-        .frontend .layer-title { color: var(--accent-green); background: rgba(46, 204, 113, 0.1); }
-        .api .layer-title { color: var(--accent-blue); background: rgba(52, 152, 219, 0.1); }
-        .backend .layer-title { color: var(--accent-purple); background: rgba(155, 89, 182, 0.1); }
-
         .layer-title:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px currentColor;
+            outline: 2px solid #333;
+            outline-offset: 1px;
         }
 
         /* ノード */
         .node {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-primary);
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 0.85rem;
-            color: var(--text-primary);
+            border: 1px solid #888;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
             text-align: center;
             cursor: text;
-            transition: all 0.2s;
             line-height: 1.4;
         }
 
-        .node:hover {
-            border-color: var(--border-accent);
-            background: var(--bg-tertiary);
-        }
-
         .node:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--accent-blue);
-            border-color: transparent;
+            outline: 2px solid #333;
+            outline-offset: 1px;
         }
 
         .node.sm {
-            font-size: 0.75rem;
-            padding: 6px 10px;
-            color: var(--text-secondary);
+            font-size: 0.72rem;
+            padding: 5px 8px;
+            color: #444;
         }
 
-        /* 技術スタック表示 */
+        /* 技術スタック */
         .tech-stack {
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
+            font-size: 0.68rem;
+            color: #888;
             text-align: center;
-            margin-top: 8px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border-primary);
+            margin-top: 6px;
             cursor: text;
         }
 
         .tech-stack:focus {
-            outline: none;
-            color: var(--text-secondary);
+            outline: 2px solid #333;
+            outline-offset: 1px;
         }
 
-        /* 矢印コンテナ */
+        /* 矢印 */
         .between-arrows {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             align-self: center;
-            padding: 0 8px;
+            padding: 0 6px;
         }
 
         .arr-label {
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
+            font-size: 0.68rem;
+            color: #666;
             white-space: nowrap;
             cursor: text;
             text-align: center;
         }
 
         .arr-label:focus {
-            outline: none;
-            color: var(--text-secondary);
+            outline: 2px solid #333;
+            outline-offset: 1px;
         }
 
         .horiz-arr {
             display: flex;
             align-items: center;
-            gap: 0;
         }
 
         .horiz-line {
-            height: 2px;
-            width: 40px;
-            background: var(--border-accent);
+            height: 1px;
+            width: 32px;
+            background: #666;
         }
 
         .horiz-line.dashed {
-            background: repeating-linear-gradient(
-                90deg,
-                var(--border-accent) 0px,
-                var(--border-accent) 6px,
-                transparent 6px,
-                transparent 10px
-            );
+            background: none;
+            border-top: 1px dashed #666;
         }
 
         .horiz-head-l {
             width: 0;
             height: 0;
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-            border-right: 7px solid var(--border-accent);
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-right: 6px solid #666;
         }
 
         .horiz-head-r {
             width: 0;
             height: 0;
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-            border-left: 7px solid var(--border-accent);
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 6px solid #666;
         }
 
-        /* モデル内部レイアウト */
+        /* モデル内部 */
         .model-inner {
             display: flex;
-            gap: 16px;
+            gap: 12px;
         }
 
         .model-col {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
             flex: 1;
         }
 
         .model-col-title {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
-            color: var(--accent-orange);
             text-align: center;
             cursor: text;
-            padding: 4px 10px;
-            background: rgba(230, 126, 34, 0.1);
-            border-radius: 4px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .model-col-title:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--accent-orange);
+            outline: 2px solid #333;
+            outline-offset: 1px;
         }
 
         /* 縦矢印 */
@@ -334,92 +249,61 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0;
         }
 
         .arr-line {
-            width: 2px;
-            height: 8px;
-            background: var(--border-accent);
+            width: 1px;
+            height: 6px;
+            background: #666;
         }
 
         .arr-head {
             width: 0;
             height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 6px solid var(--border-accent);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid #666;
         }
 
-        /* データフローセクション */
+        /* データフロー */
         .data-flow {
-            margin-top: 30px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-primary);
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
         }
 
         .flow-title {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
+            font-size: 0.72rem;
+            color: #888;
             text-align: center;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            margin-bottom: 12px;
         }
 
         .flow-diagram {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .flow-item {
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            border: 1px solid #888;
+            border-radius: 5px;
+            font-size: 0.75rem;
             text-align: center;
             cursor: text;
         }
 
         .flow-item:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--accent-blue);
-        }
-
-        .flow-item.user {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-primary);
-        }
-
-        .flow-item.frontend {
-            background: rgba(46, 204, 113, 0.15);
-            border: 1px solid var(--accent-green);
-            color: var(--accent-green);
-        }
-
-        .flow-item.api {
-            background: rgba(52, 152, 219, 0.15);
-            border: 1px solid var(--accent-blue);
-            color: var(--accent-blue);
-        }
-
-        .flow-item.backend {
-            background: rgba(155, 89, 182, 0.15);
-            border: 1px solid var(--accent-purple);
-            color: var(--accent-purple);
-        }
-
-        .flow-item.db {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
+            outline: 2px solid #333;
+            outline-offset: 1px;
         }
 
         .flow-arrow {
-            color: var(--text-tertiary);
-            font-size: 1rem;
+            color: #888;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -427,7 +311,6 @@
     <div class="container">
         <h1>InfoMap システムアーキテクチャ</h1>
         <p class="subtitle">ニュース情報空間可視化システム</p>
-        <div class="edit-hint">クリックして編集可能</div>
 
         <div class="diagram">
             <!-- 外部データ -->
@@ -439,7 +322,7 @@
                 </div>
             </div>
 
-            <!-- 上部矢印ゾーン -->
+            <!-- 上部矢印 -->
             <div class="arrows-zone">
                 <svg id="top-arrows"></svg>
             </div>
@@ -447,16 +330,16 @@
             <!-- 3層 -->
             <div class="layers" id="layers-row">
 
-                <!-- 層③ ブラウザ拡張 -->
-                <div class="layer-box frontend" style="width: 180px;" id="box-ext">
+                <!-- ブラウザ拡張 -->
+                <div class="layer-box" style="width: 160px;" id="box-ext">
                     <div class="layer-title" contenteditable="true" spellcheck="false">ブラウザ拡張</div>
                     <div class="node" contenteditable="true" spellcheck="false">情報空間マップ</div>
                     <div class="node" contenteditable="true" spellcheck="false">多様性スコア</div>
                     <div class="node" contenteditable="true" spellcheck="false">推薦記事</div>
-                    <div class="tech-stack" contenteditable="true" spellcheck="false">TypeScript · D3.js · Chrome API</div>
+                    <div class="tech-stack" contenteditable="true" spellcheck="false">TypeScript · D3.js</div>
                 </div>
 
-                <!-- 層③↔層② の矢印 -->
+                <!-- 矢印 -->
                 <div class="between-arrows">
                     <div>
                         <div class="arr-label" contenteditable="true" spellcheck="false">表示データ</div>
@@ -474,8 +357,8 @@
                     </div>
                 </div>
 
-                <!-- 層② APIサーバー -->
-                <div class="layer-box api" style="width: 190px;" id="box-api">
+                <!-- APIサーバー -->
+                <div class="layer-box" style="width: 160px;" id="box-api">
                     <div class="layer-title" contenteditable="true" spellcheck="false">APIサーバー</div>
                     <div class="node" contenteditable="true" spellcheck="false">分類API</div>
                     <div class="node" contenteditable="true" spellcheck="false">推薦API</div>
@@ -483,7 +366,7 @@
                     <div class="tech-stack" contenteditable="true" spellcheck="false">FastAPI · Redis</div>
                 </div>
 
-                <!-- 層②↔層① の矢印 -->
+                <!-- 矢印 -->
                 <div class="between-arrows">
                     <div>
                         <div class="arr-label" contenteditable="true" spellcheck="false">推論結果</div>
@@ -494,11 +377,10 @@
                     </div>
                 </div>
 
-                <!-- 層① 分類モデル -->
-                <div class="layer-box backend" id="box-model">
+                <!-- 分類モデル -->
+                <div class="layer-box" id="box-model">
                     <div class="layer-title" contenteditable="true" spellcheck="false">分類モデル</div>
                     <div class="model-inner">
-                        <!-- 争点抽出 -->
                         <div class="model-col">
                             <div class="model-col-title" contenteditable="true" spellcheck="false">争点抽出</div>
                             <div class="node sm" contenteditable="true" spellcheck="false">BERT埋め込み</div>
@@ -509,7 +391,6 @@
                             <div class="arr-wrap"><div class="arr-line"></div><div class="arr-head"></div></div>
                             <div class="node sm" contenteditable="true" spellcheck="false">KGラベリング</div>
                         </div>
-                        <!-- 視点抽出 -->
                         <div class="model-col">
                             <div class="model-col-title" contenteditable="true" spellcheck="false">視点抽出</div>
                             <div class="node sm" contenteditable="true" spellcheck="false">対照学習</div>
@@ -530,15 +411,15 @@
             <div class="data-flow">
                 <div class="flow-title">データフロー</div>
                 <div class="flow-diagram">
-                    <div class="flow-item user" contenteditable="true" spellcheck="false">ユーザー</div>
+                    <div class="flow-item" contenteditable="true" spellcheck="false">ユーザー</div>
                     <span class="flow-arrow">→</span>
-                    <div class="flow-item frontend" contenteditable="true" spellcheck="false">Chrome拡張</div>
+                    <div class="flow-item" contenteditable="true" spellcheck="false">Chrome拡張</div>
                     <span class="flow-arrow">→</span>
-                    <div class="flow-item api" contenteditable="true" spellcheck="false">API</div>
+                    <div class="flow-item" contenteditable="true" spellcheck="false">API</div>
                     <span class="flow-arrow">→</span>
-                    <div class="flow-item backend" contenteditable="true" spellcheck="false">MLモデル</div>
+                    <div class="flow-item" contenteditable="true" spellcheck="false">MLモデル</div>
                     <span class="flow-arrow">→</span>
-                    <div class="flow-item db" contenteditable="true" spellcheck="false">DB</div>
+                    <div class="flow-item" contenteditable="true" spellcheck="false">DB</div>
                 </div>
             </div>
         </div>
@@ -557,8 +438,8 @@
                 const modelRect = boxModel.getBoundingClientRect();
 
                 const defs = `<defs>
-                    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M2 1L8 5L2 9" fill="none" stroke="#4a4a6a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                        <path d="M2 1L8 5L2 9" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </marker>
                 </defs>`;
                 svg.innerHTML = defs;
@@ -569,10 +450,10 @@
                     l.setAttribute('y1', y1);
                     l.setAttribute('x2', x2);
                     l.setAttribute('y2', y2);
-                    l.setAttribute('stroke', '#4a4a6a');
-                    l.setAttribute('stroke-width', '2');
+                    l.setAttribute('stroke', '#666');
+                    l.setAttribute('stroke-width', '1');
                     l.setAttribute('marker-end', 'url(#arr2)');
-                    if (dashed) l.setAttribute('stroke-dasharray', '6,4');
+                    if (dashed) l.setAttribute('stroke-dasharray', '4,3');
                     svg.appendChild(l);
                 }
 
@@ -580,8 +461,8 @@
                 const modelCx = modelRect.left + modelRect.width / 2 - svgRect.left;
                 const svgH = svgRect.height;
 
-                line(apiCx, 0, apiCx, svgH - 5);
-                line(modelCx, 0, modelCx, svgH - 5, true);
+                line(apiCx, 0, apiCx, svgH - 4);
+                line(modelCx, 0, modelCx, svgH - 4, true);
             }
 
             drawArrows();
