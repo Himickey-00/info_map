@@ -12,412 +12,266 @@
         }
         body {
             font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: #0f0f14;
             min-height: 100vh;
             padding: 40px;
             color: #fff;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         h1 {
             text-align: center;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: #fff;
         }
         .subtitle {
             text-align: center;
-            color: #888;
-            margin-bottom: 40px;
+            color: #666;
+            margin-bottom: 50px;
+            font-size: 0.9rem;
         }
         .architecture {
             display: flex;
-            flex-direction: column;
-            gap: 30px;
+            gap: 24px;
+            align-items: stretch;
         }
-        .layer {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .layer-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .layer-number {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        .layer-1 .layer-number { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-        .layer-2 .layer-number { background: linear-gradient(135deg, #3498db, #2980b9); }
-        .layer-3 .layer-number { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .layer-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .layer-1 .layer-title { color: #e74c3c; }
-        .layer-2 .layer-title { color: #3498db; }
-        .layer-3 .layer-title { color: #2ecc71; }
-        .layer-content {
+        .section {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
         }
-        .sublayer {
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 16px;
-        }
-        .sublayer-title {
+        .section-header {
+            text-align: center;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
             font-size: 0.9rem;
-            font-weight: bold;
-            margin-bottom: 12px;
-            color: #ccc;
+            letter-spacing: 0.05em;
         }
-        .pipeline {
+        .frontend .section-header {
+            background: #2ecc71;
+            color: #fff;
+        }
+        .api .section-header {
+            background: #3498db;
+            color: #fff;
+        }
+        .backend .section-header {
+            background: #9b59b6;
+            color: #fff;
+        }
+        .section-content {
+            flex: 1;
+            background: #1a1a22;
+            border-radius: 0 0 8px 8px;
+            padding: 24px 20px;
             display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+            flex-direction: column;
+            gap: 16px;
         }
         .component {
-            background: rgba(255,255,255,0.1);
-            padding: 10px 16px;
+            background: #25252f;
             border-radius: 8px;
-            font-size: 0.85rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            text-align: center;
-            min-width: 100px;
-        }
-        .component.input {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            border-color: #9b59b6;
-        }
-        .component.process {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            border-color: #3498db;
-        }
-        .component.model {
-            background: linear-gradient(135deg, #e67e22, #d35400);
-            border-color: #e67e22;
-        }
-        .component.output {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            border-color: #2ecc71;
-        }
-        .component.external {
-            background: linear-gradient(135deg, #1abc9c, #16a085);
-            border-color: #1abc9c;
-        }
-        .component.storage {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-            border-color: #34495e;
-        }
-        .arrow {
-            color: #666;
-            font-size: 1.2rem;
-        }
-        .flow-section {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .flow-box {
-            flex: 1;
-            min-width: 280px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
             padding: 16px;
+            border-left: 3px solid;
         }
-        .flow-box-title {
-            font-size: 0.85rem;
+        .frontend .component { border-left-color: #2ecc71; }
+        .api .component { border-left-color: #3498db; }
+        .backend .component { border-left-color: #9b59b6; }
+        .component-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+        .component-desc {
+            font-size: 0.8rem;
             color: #888;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            line-height: 1.5;
         }
-        .flow-box-title::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        .flow-box.topic .flow-box-title::before { background: #e74c3c; }
-        .flow-box.viewpoint .flow-box-title::before { background: #9b59b6; }
-        .vertical-pipeline {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .vertical-pipeline .arrow {
-            text-align: center;
-            transform: rotate(90deg);
-        }
-        .tech-stack {
+        .tech-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
+            gap: 6px;
+            margin-top: 10px;
         }
         .tech-tag {
-            background: rgba(255,255,255,0.1);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            background: rgba(255,255,255,0.08);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
             color: #aaa;
         }
-        .connector {
+        .arrow-container {
             display: flex;
-            justify-content: center;
-            padding: 10px 0;
+            align-items: center;
+            padding: 0 10px;
         }
-        .connector-line {
-            width: 4px;
-            height: 40px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
-            border-radius: 2px;
-            position: relative;
-        }
-        .connector-line::after {
-            content: '▼';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255,255,255,0.3);
-            font-size: 0.8rem;
+        .arrow {
+            color: #444;
+            font-size: 1.5rem;
         }
         .data-flow {
+            margin-top: 40px;
+            background: #1a1a22;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .flow-title {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .flow-diagram {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-            margin-top: 15px;
-        }
-        .data-label {
-            font-size: 0.8rem;
-            color: #888;
-        }
-        .bidirectional {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #666;
-        }
-        .legend {
-            display: flex;
+            gap: 12px;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
         }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .flow-item {
+            padding: 10px 16px;
+            border-radius: 6px;
             font-size: 0.8rem;
-            color: #888;
+            text-align: center;
         }
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
+        .flow-item.user { background: #34495e; }
+        .flow-item.frontend { background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; }
+        .flow-item.api { background: rgba(52, 152, 219, 0.2); border: 1px solid #3498db; }
+        .flow-item.backend { background: rgba(155, 89, 182, 0.2); border: 1px solid #9b59b6; }
+        .flow-item.db { background: #2c3e50; }
+        .flow-arrow {
+            color: #444;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>InfoMap システムアーキテクチャ</h1>
-        <p class="subtitle">LLMとナレッジグラフを活用した情報空間可視化システム</p>
+        <p class="subtitle">ニュース情報空間可視化システム</p>
 
         <div class="architecture">
-            <!-- Layer 1 -->
-            <div class="layer layer-1">
-                <div class="layer-header">
-                    <div class="layer-number">1</div>
-                    <div class="layer-title">争点・視点の教師なし分類モデル</div>
-                </div>
-                <div class="layer-content">
-                    <div class="flow-section">
-                        <!-- Topic Extraction -->
-                        <div class="flow-box topic">
-                            <div class="flow-box-title">(a) 争点抽出パイプライン</div>
-                            <div class="vertical-pipeline">
-                                <div class="component input">ニュース記事<br><small>タイトル・本文</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component model">SentenceBERT<br><small>埋め込み生成</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component process">Parametric UMAP<br><small>次元削減（固定座標空間）</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component process">HDBSCAN<br><small>密度ベースクラスタリング</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component process">c-TF-IDF<br><small>代表語抽出</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component external">ナレッジグラフ照合<br><small>上位概念によるラベリング</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component output">トピックラベル<br><small>+ 2D座標</small></div>
-                            </div>
+            <!-- Frontend -->
+            <div class="section frontend">
+                <div class="section-header">FRONTEND</div>
+                <div class="section-content">
+                    <div class="component">
+                        <div class="component-title">Chrome Extension</div>
+                        <div class="component-desc">
+                            ニュースサイト上に情報空間マップを埋め込み表示
                         </div>
-
-                        <!-- Viewpoint Extraction -->
-                        <div class="flow-box viewpoint">
-                            <div class="flow-box-title">(b) 視点抽出パイプライン</div>
-                            <div class="vertical-pipeline">
-                                <div class="component input">同一争点内<br><small>記事ペア</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component model">対照学習<br><small>InfoNCE Loss</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component process">視点ベクトル<br><small>立場・視点の距離表現</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component external">ナレッジグラフ<br><small>メディアバイアス中和</small></div>
-                                <div class="arrow">↓</div>
-                                <div class="component output">視点ラベル<br><small>中立的な視点識別</small></div>
-                            </div>
+                        <div class="tech-tags">
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Chrome API</span>
                         </div>
                     </div>
-                    <div class="tech-stack">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">BERTopic</span>
-                        <span class="tech-tag">SentenceBERT</span>
-                        <span class="tech-tag">UMAP</span>
-                        <span class="tech-tag">HDBSCAN</span>
-                        <span class="tech-tag">PyTorch</span>
+                    <div class="component">
+                        <div class="component-title">可視化マップ</div>
+                        <div class="component-desc">
+                            記事の2D座標をインタラクティブに描画
+                        </div>
+                        <div class="tech-tags">
+                            <span class="tech-tag">D3.js</span>
+                        </div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">ダッシュボード</div>
+                        <div class="component-desc">
+                            閲覧履歴・多様性スコア・推薦記事の表示
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="connector">
-                <div class="connector-line"></div>
+            <div class="arrow-container">
+                <span class="arrow">⇄</span>
             </div>
 
-            <!-- Layer 2 -->
-            <div class="layer layer-2">
-                <div class="layer-header">
-                    <div class="layer-number">2</div>
-                    <div class="layer-title">リアルタイム可視化エンジン</div>
-                </div>
-                <div class="layer-content">
-                    <div class="pipeline">
-                        <div class="component input">新規記事</div>
-                        <span class="arrow">→</span>
-                        <div class="component process">API<br>エンドポイント</div>
-                        <span class="arrow">→</span>
-                        <div class="component model">Parametric UMAP<br><small>固定座標空間へ射影</small></div>
-                        <span class="arrow">→</span>
-                        <div class="component process">争点・視点<br>分類</div>
-                        <span class="arrow">→</span>
-                        <div class="component output">2D座標<br>+ ラベル</div>
-                    </div>
-                    <div class="data-flow">
-                        <div class="component storage">記事DB<br><small>座標・メタデータ</small></div>
-                        <div class="bidirectional">
-                            <span>←</span>
-                            <span>→</span>
+            <!-- API -->
+            <div class="section api">
+                <div class="section-header">API</div>
+                <div class="section-content">
+                    <div class="component">
+                        <div class="component-title">記事分類API</div>
+                        <div class="component-desc">
+                            記事を受け取り、トピック・視点・2D座標を返却
                         </div>
-                        <div class="component process">D3.js<br><small>可視化レンダリング</small></div>
-                        <span class="arrow">→</span>
-                        <div class="component output">情報空間マップ<br><small>インタラクティブ2D</small></div>
+                        <div class="tech-tags">
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">REST</span>
+                        </div>
                     </div>
-                    <div class="tech-stack">
-                        <span class="tech-tag">FastAPI / Flask</span>
-                        <span class="tech-tag">D3.js</span>
-                        <span class="tech-tag">PostgreSQL / Redis</span>
+                    <div class="component">
+                        <div class="component-title">推薦API</div>
+                        <div class="component-desc">
+                            閲覧履歴から未接触領域の記事を推薦
+                        </div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">多様性スコアAPI</div>
+                        <div class="component-desc">
+                            GS-score（エントロピー+コサイン距離）を算出
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="connector">
-                <div class="connector-line"></div>
+            <div class="arrow-container">
+                <span class="arrow">⇄</span>
             </div>
 
-            <!-- Layer 3 -->
-            <div class="layer layer-3">
-                <div class="layer-header">
-                    <div class="layer-number">3</div>
-                    <div class="layer-title">ブラウザ拡張（Chrome Extension）</div>
-                </div>
-                <div class="layer-content">
-                    <div class="flow-section">
-                        <div class="flow-box">
-                            <div class="flow-box-title">📍 マップ表示</div>
-                            <div class="pipeline" style="flex-direction: column; align-items: stretch;">
-                                <div class="component">ニュースサイト上に<br>情報空間マップを埋め込み</div>
-                                <div class="component">現在地ハイライト</div>
-                                <div class="component">未接触クラスタ表示</div>
-                            </div>
+            <!-- Backend -->
+            <div class="section backend">
+                <div class="section-header">BACKEND</div>
+                <div class="section-content">
+                    <div class="component">
+                        <div class="component-title">分類モデル</div>
+                        <div class="component-desc">
+                            BERTopic + Parametric UMAPで争点・視点を抽出
                         </div>
-                        <div class="flow-box">
-                            <div class="flow-box-title">📊 多様性スコア</div>
-                            <div class="pipeline" style="flex-direction: column; align-items: stretch;">
-                                <div class="component storage">閲覧ログ蓄積</div>
-                                <div class="component process">GS-score算出<br><small>コサイン距離 + エントロピー</small></div>
-                                <div class="component output">ダッシュボード表示</div>
-                            </div>
-                        </div>
-                        <div class="flow-box">
-                            <div class="flow-box-title">💡 レコメンド</div>
-                            <div class="pipeline" style="flex-direction: column; align-items: stretch;">
-                                <div class="component process">未閲覧争点・視点の<br>記事を優先抽出</div>
-                                <div class="component output">推薦記事表示</div>
-                                <div class="component">偶発的出会いの創出</div>
-                            </div>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">PyTorch</span>
                         </div>
                     </div>
-                    <div class="tech-stack">
-                        <span class="tech-tag">TypeScript</span>
-                        <span class="tech-tag">Chrome Extension API</span>
-                        <span class="tech-tag">D3.js</span>
-                        <span class="tech-tag">LocalStorage / IndexedDB</span>
+                    <div class="component">
+                        <div class="component-title">ナレッジグラフ</div>
+                        <div class="component-desc">
+                            外部知識でトピックラベリング・バイアス中和
+                        </div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">データベース</div>
+                        <div class="component-desc">
+                            記事・座標・ユーザー閲覧履歴を永続化
+                        </div>
+                        <div class="tech-tags">
+                            <span class="tech-tag">PostgreSQL</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Legend -->
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);"></div>
-                <span>入力データ</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #e67e22, #d35400);"></div>
-                <span>MLモデル</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #3498db, #2980b9);"></div>
-                <span>処理</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #1abc9c, #16a085);"></div>
-                <span>外部知識</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #34495e, #2c3e50);"></div>
-                <span>データストア</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: linear-gradient(135deg, #2ecc71, #27ae60);"></div>
-                <span>出力</span>
+        <!-- Data Flow -->
+        <div class="data-flow">
+            <div class="flow-title">データフロー</div>
+            <div class="flow-diagram">
+                <div class="flow-item user">ユーザー</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item frontend">Chrome拡張</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item api">分類API</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item backend">MLモデル</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item db">DB</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item frontend">マップ表示</div>
             </div>
         </div>
     </div>
